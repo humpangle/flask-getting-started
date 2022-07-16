@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>
+      {% block title %} {% endblock %} - Flaskr
+    </title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='bulma.css') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar border-b-2 mb-4" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item text-4xl font-black italic" href="/">
+          Flaskr
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              {% if g.user %}
+                <span class="navbar-item">
+                  {{g.user['username']}}
+                </span>
+
+                <a href="{{ url_for('auth.logout') }}" class="button is-light">
+                  Log out
+                </a>
+              {% else %}
+
+                <a href="{{ url_for('auth.register') }}" class="button is-primary">
+                  <strong>
+                    Register
+                  </strong>
+                </a>
+
+                <a href="{{ url_for('auth.login') }}" class="button is-light">
+                  Log in
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="content max-w-3xl mx-auto">
+      <header>
+        {% block header %}{% endblock header %}
+      </header>
+
+      {% for message in get_flashed_messages() %}
+        <div class="notification">
+          {{message}}
+        </div>
+      {% endfor %}
+
+      {% block content %}{% endblock content %}
+    </section>
+  </body>
+</html>

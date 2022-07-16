@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function tailwind {
+  : "Start tailwindcss in watch mode"
+  tailwindcss \
+    --input=./flaskr/static/style.tailwind.css \
+    --output=./flaskr/static/style.css \
+    --watch
+}
+
+function flask {
+  : "Start flask in development mode"
+  poetry run flask run
+}
+
+function dev {
+  : "Tasks flask, tailwind in parallel"
+  flask &
+  tailwind &
+  wait
+}
+
+function help {
+  : "Print all tasks"
+  compgen -A function | grep -v "^_" | while read -r name; do
+    paste <(printf '%s' "$name") <(type "$name" | sed -nEe 's/^[[:space:]]*: ?"(.*)";/    \1/p')
+  done
+
+  printf "\n"
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time "${@:-help}"
