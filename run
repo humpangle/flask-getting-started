@@ -1,27 +1,46 @@
 #!/bin/bash
 
+function _env {
+  local env
+
+  if [[ -n "$1" ]]; then
+    env="$1"
+  else
+    env=".env"
+  fi
+
+  splitenvs "$env" --lines
+}
+
 function tailwind {
-  : "Start tailwindcss in watch mode"
+  : "Run tailwind in watch mode"
   tailwindcss \
-    --input=./flaskr/static/style.tailwind.css \
-    --output=./flaskr/static/style.css \
+    --input=flaskr/static/app.tailwind.cs \
+    --output=flaskr/static/app.css \
+    --config=tailwind.config.js \
     --watch
 }
 
 function flask {
-  : "Start flask in development mode"
-  poetry run flask run
+  : "Start flask development server"
+  : "Usage:"
+  : "    run flask env_filename"
+  : "    run flask"
+  eval "$(_env "$1") poetry run flask run"
 }
 
 function dev {
-  : "Tasks flask, tailwind in parallel"
-  flask &
+  : "Run development tasks"
+  : "Usage:"
+  : "    run dev env_filename"
+  : "    run dev"
   tailwind &
+  flask "$@" &
   wait
 }
 
 function help {
-  : "Print all tasks"
+  : "List tasks"
   compgen -A function | grep -v "^_" | while read -r name; do
     paste <(printf '%s' "$name") <(type "$name" | sed -nEe 's/^[[:space:]]*: ?"(.*)";/    \1/p')
   done
